@@ -1,0 +1,27 @@
+package com.netdisk.common.po;
+
+public class Login {
+    private String userName;
+    private String passWord;
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setPassWord(String passWord) {
+        this.passWord = passWord;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getPassWord() {
+        return passWord;
+    }
+
+    @Override
+    public String toString() {
+        return "username:" + this.getUserName() + '\n' + "password:" + this.getPassWord();
+    }
+}
