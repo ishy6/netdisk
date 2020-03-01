@@ -1,9 +1,7 @@
 package com.netdisk.common.service;
 
 import com.netdisk.common.po.SystemUser;
-import com.netdisk.common.po.User;
 import com.netdisk.common.util.SystemDto;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -24,6 +22,10 @@ public interface SystemSevice {
     public boolean logout(String token);
     // 检测当前登陆状态，检查token是否过期
     public boolean checkStatus(String token);
-    // 修改用户信息
-    public boolean updateUserInfo(SystemUser systemUser);
+    // 修改用户信息,不能调用此方法修改密码和加密信息
+    public SystemDto updateUserInfo(SystemUser systemUser,String token);
+    // 修改密码
+    public String updatePwd(String token,String oldPwd,String newPwd);
+    // 注册新用户
+    public int registUser(SystemUser systemUser);
 }

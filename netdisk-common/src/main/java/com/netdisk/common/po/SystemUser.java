@@ -66,9 +66,7 @@ public class SystemUser {
         this.USER_CREATETIME = USER_CREATETIME;
     }
 
-    public String getUSER_ENCRYPT() {
-        return USER_ENCRYPT;
-    }
+    public String getUSER_ENCRYPT() { return USER_ENCRYPT; }
 
     public void setUSER_ENCRYPT(String USER_ENCRYPT) {
         this.USER_ENCRYPT = USER_ENCRYPT;

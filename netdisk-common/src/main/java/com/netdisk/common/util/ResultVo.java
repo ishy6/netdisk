@@ -4,6 +4,7 @@ public class ResultVo<T> {
     private String msg;
     private Integer code;
     private Boolean ret;
+    private String extraMsg;
     private T data;
 
     public String getMsg() {
@@ -37,4 +38,8 @@ public class ResultVo<T> {
     public void setData(T data) {
         this.data = data;
     }
+
+    public String getExtraMsg() {  return extraMsg;  }
+
+    public void setExtraMsg(String extraMsg) { this.extraMsg = extraMsg;  }
 }

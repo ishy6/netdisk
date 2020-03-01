@@ -1,16 +1,13 @@
 package com.netdisk.common.mapper;
 
 import com.netdisk.common.po.SystemUser;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 @Mapper
 public interface SystemMapper {
-    @Select("select * from SYS_USER where USER_NAME = #{name}") // 采用#{}的方式把@Param注解括号内的参数进行引用
-    List<SystemUser> getUserByName(@Param("name")String name);
+    @Select("select * from SYS_USER where USER_ACCOUNT = #{account}") // 采用#{}的方式把@Param注解括号内的参数进行引用,单个参数也可不加
+    List<SystemUser> getUserByAccount(@Param("account")String account);
 
     @Update({"<script>","update sys_user",
             "<set>","<if test='USER_NAME != null'>","USER_NAME = #{USER_NAME},","</if>",
@@ -22,5 +19,9 @@ public interface SystemMapper {
             "where USER_ID = #{USER_ID}",
             "</script>"
            })
-    boolean updateUserInfo(SystemUser systemUser); // 传入的参数为对象，mybatis能够识别其中的属性
+    boolean updateUserInfo(SystemUser systemUser); // 传入的参数为对象，mybatis能够根据getter识别其中的属性
+
+    @Insert("insert into sys_user values(#{USER_ID},#{USER_NAME},#{USER_TELNUMBER},#{USER_ACCOUNT}," +
+            "#{USER_PASSWORD},#{USER_IMAGE},#{USER_CREATETIME},#{USER_ENCRYPT})")
+    int insertUserInfo(SystemUser systemUser);// 插入数据
 }
