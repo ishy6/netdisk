@@ -28,4 +28,6 @@ public interface SystemSevice {
     public String updatePwd(String token,String oldPwd,String newPwd);
     // 注册新用户
     public int registUser(SystemUser systemUser);
+    // 更新个人文件储量,isAdd 为true表示加，false表示减
+    public int updateFileTotal(String userId,Integer fileSize,boolean isAdd);
 }

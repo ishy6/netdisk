@@ -1,6 +1,7 @@
 package com.netdisk.common.service.impl;
 
 import com.netdisk.common.mapper.OwnFileMapper;
+import com.netdisk.common.mapper.SystemMapper;
 import com.netdisk.common.po.FileInfo;
 import com.netdisk.common.po.OwnFile;
 import com.netdisk.common.service.OwnFileService;
@@ -17,6 +18,12 @@ import java.util.UUID;
 public class OwnFileServiceImpl implements OwnFileService {
     @Autowired
     private OwnFileMapper ownFileMapper;
+    @Autowired
+    private SystemMapper systemMapper;
+
+    public OwnFileServiceImpl() {
+    }
+
     @Override
     public int generateRootCatalog(String userId,String userName) {
         OwnFile ownFile = new OwnFile();
@@ -61,9 +68,12 @@ public class OwnFileServiceImpl implements OwnFileService {
         ownFile.setUSER_NAME(userName);
         int result = ownFileMapper.insertOwnFile(ownFile);
         if(result > 0){
-            if(ownFileMapper.updateLft(ownFile.getOWNFILE_LFT())>0 &&
-                    ownFileMapper.updateRgt(ownFile.getOWNFILE_RGT())>0)
+            if(ownFileMapper.updateLft(ownFile.getOWNFILE_LFT(),ownFile.getFILE_ID(),2)>0 &&
+                    ownFileMapper.updateRgt(ownFile.getOWNFILE_RGT(),ownFile.getFILE_ID(),2)>0) {
+                String fileSize = fileInfo.getFILE_SIZE();
+                systemMapper.updateFileTotal(userId,Integer.valueOf(fileSize.substring(0,fileSize.length()-1)));// 把当前文件大小加到个人信息中的文件储量中
                 return true;
+            }
         }
         return false;
     }
@@ -74,7 +84,12 @@ public class OwnFileServiceImpl implements OwnFileService {
     }
 
     @Override
-    public int removeFile(String id) {
-        return ownFileMapper.deleteOwnFile(id);
+    public boolean removeFile(Integer lft, Integer rgt,String ownId) {
+        int result = ownFileMapper.deleteOwnFile(ownId);
+        if(result > 0){
+            if(ownFileMapper.updateLft(lft,ownId,-2)>0 && ownFileMapper.updateRgt(rgt,ownId,-2)>0)
+                return true;
+        }
+        return false;
     }
 }

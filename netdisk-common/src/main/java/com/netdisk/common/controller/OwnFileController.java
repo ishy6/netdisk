@@ -49,9 +49,9 @@ public class OwnFileController {
     }
 
     @RequestMapping("/removefile")
-    public ResultVo removeFile(@RequestParam("id") String id){
-        int result = ownFileService.removeFile(id);
-        if (result > 0)
+    public ResultVo removeFile(@RequestParam("lft") Integer lft,@RequestParam("rgt") Integer rgt,@RequestParam("id") String ownId){
+        boolean result = ownFileService.removeFile(lft,rgt,ownId);
+        if (result)
             return ResultVoUtil.success();
         else
             return ResultVoUtil.fail();

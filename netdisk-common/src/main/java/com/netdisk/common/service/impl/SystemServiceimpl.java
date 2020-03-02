@@ -89,6 +89,7 @@ public class SystemServiceimpl implements SystemSevice {
         systemDto.setUser_name(systemUser.getUSER_NAME());
         systemDto.setUser_image(systemUser.getUSER_IMAGE());
         systemDto.setUser_telnumber(systemUser.getUSER_TELNUMBER());
+        systemDto.setUser_filetotal(systemUser.getUSER_FILETOTAL());
         return systemDto;
     }
 
@@ -164,7 +165,15 @@ public class SystemServiceimpl implements SystemSevice {
         systemUser.setUSER_CREATETIME(time);
         systemUser.setUSER_ENCRYPT(encrypt);
         systemUser.setUSER_ID(UUID.randomUUID().toString().replace("-",""));
+        systemUser.setUSER_FILETOTAL(0);
         Integer result = systemMapper.insertUserInfo(systemUser);
         return result;
+    }
+
+    @Override
+    public int updateFileTotal(String userId, Integer fileSize, boolean isAdd) {
+        if(!isAdd)
+            fileSize = -fileSize;
+        return systemMapper.updateFileTotal(userId,fileSize);
     }
 }

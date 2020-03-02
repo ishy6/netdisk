@@ -33,9 +33,10 @@ public interface OwnFileMapper {
     @Select("select * from ownfile t where t.USER_ID = #{userId} and t.OWNFILE_LFT > #{left} and t.OWNFILE_RGT < #{right} order by t.OWNFILE_LFT ASC")
     List<OwnFile> selectByCode(@Param("userId") String userId,@Param("left") Integer left,@Param("right") Integer right); // 根据左右编码查找节点
 
-    @Update("update ownfile t set t.OWNFILE_LFT = t.OWNFILE_LFT + 2 where t.OWNFILE_LFT >= #{lft}")
-    int updateLft(Integer lft);
+    @Update("update ownfile t set t.OWNFILE_LFT = t.OWNFILE_LFT + #{updateVal} where t.OWNFILE_LFT >= #{lft} and t.OWNFILE_ID = #{ownId}")
+    int updateLft(@Param("lft") Integer lft,@Param("ownId") String ownId,@Param("updateVal")Integer updateVal);
 
-    @Update("update ownfile t set t.OWNFILE_RGT = t.OWNFILE_RGT + 2 where t.OWNFILE_RGT >= #{rgt}")
-    int updateRgt(Integer rgt);
+    // updateVal为正数增加节点左右编码，若为负数表示减少左右编码 +2 或者 -2
+    @Update("update ownfile t set t.OWNFILE_RGT = t.OWNFILE_RGT + #{updateVal} where t.OWNFILE_RGT >= #{rgt} and t.OWNFILE_ID = #{ownId}")
+    int updateRgt(@Param("rgt") Integer rgt,@Param("ownId") String ownId,@Param("updateVal")Integer updateVal);
 }

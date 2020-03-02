@@ -6,6 +6,7 @@ public class SystemDto {
     private String user_telnumber;
     private String user_account;
     private String user_image;
+    private Integer user_filetotal;
 
     public String getUser_id() {
         return user_id;
@@ -46,4 +47,8 @@ public class SystemDto {
     public void setUser_image(String user_image) {
         this.user_image = user_image;
     }
+
+    public Integer getUser_filetotal() {  return user_filetotal;  }
+
+    public void setUser_filetotal(Integer user_filetotal) {  this.user_filetotal = user_filetotal;  }
 }

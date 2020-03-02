@@ -9,6 +9,7 @@ public class SystemUser {
     private String USER_IMAGE;
     private String USER_CREATETIME;
     private String USER_ENCRYPT;
+    private Integer USER_FILETOTAL;
 
     public String getUSER_ID() {
         return USER_ID;
@@ -71,4 +72,8 @@ public class SystemUser {
     public void setUSER_ENCRYPT(String USER_ENCRYPT) {
         this.USER_ENCRYPT = USER_ENCRYPT;
     }
+
+    public Integer getUSER_FILETOTAL() {    return USER_FILETOTAL;   }
+
+    public void setUSER_FILETOTAL(Integer USER_FILETOTAL) {    this.USER_FILETOTAL = USER_FILETOTAL; }
 }
