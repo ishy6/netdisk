@@ -7,6 +7,7 @@ public class SystemDto {
     private String user_account;
     private String user_image;
     private Integer user_filetotal;
+    private String token;
 
     public String getUser_id() {
         return user_id;
@@ -51,4 +52,8 @@ public class SystemDto {
     public Integer getUser_filetotal() {  return user_filetotal;  }
 
     public void setUser_filetotal(Integer user_filetotal) {  this.user_filetotal = user_filetotal;  }
+
+    public String getToken() {    return token;  }
+
+    public void setToken(String token) { this.token = token; }
 }

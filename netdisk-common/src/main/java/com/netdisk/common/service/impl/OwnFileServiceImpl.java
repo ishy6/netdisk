@@ -25,30 +25,8 @@ public class OwnFileServiceImpl implements OwnFileService {
     }
 
     @Override
-    public int generateRootCatalog(String userId,String userName) {
-        OwnFile ownFile = new OwnFile();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String time = df.format(new Date());
-        ownFile.setOWNFILE_ID(userId);
-        ownFile.setFILE_CREATETIME(time);
-        ownFile.setFILE_ID("unite-root-id");
-        ownFile.setFILE_NAME("/");
-        ownFile.setFILE_SIZE("null");
-        ownFile.setFILE_UPDATETIME(time);
-        ownFile.setFILE_VISITTIME(time);
-        ownFile.setOWNFILE_PATH("/"); //
-        ownFile.setOWNFILE_LEVEL(0);
-        ownFile.setOWNFILE_LFT(0);
-        ownFile.setOWNFILE_PARENTID("null");
-        ownFile.setOWNFILE_RGT(0);
-        ownFile.setUSER_ID(userId);
-        ownFile.setUSER_NAME(userName);
-        return ownFileMapper.insertOwnFile(ownFile);
-    }
-
-    @Override
     // @Transactional
-    public boolean insertOneRecord(FileInfo fileInfo,OwnFile parent,String userId,String userName) {
+    public boolean insertOneRecord(FileInfo fileInfo,OwnFile parent,String userId,String userName) { // 先更新左右编码再插入节点
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String time = df.format(new Date());
         OwnFile ownFile = new OwnFile();
@@ -66,14 +44,12 @@ public class OwnFileServiceImpl implements OwnFileService {
         ownFile.setOWNFILE_RGT(parent.getOWNFILE_RGT() + 1);// 插入节点右编码
         ownFile.setUSER_ID(userId);
         ownFile.setUSER_NAME(userName);
-        int result = ownFileMapper.insertOwnFile(ownFile);
-        if(result > 0){
-            if(ownFileMapper.updateLft(ownFile.getOWNFILE_LFT(),ownFile.getFILE_ID(),2)>0 &&
-                    ownFileMapper.updateRgt(ownFile.getOWNFILE_RGT(),ownFile.getFILE_ID(),2)>0) {
-                String fileSize = fileInfo.getFILE_SIZE();
-                systemMapper.updateFileTotal(userId,Integer.valueOf(fileSize.substring(0,fileSize.length()-1)));// 把当前文件大小加到个人信息中的文件储量中
-                return true;
-            }
+        if(ownFileMapper.updateLft(ownFile.getOWNFILE_LFT(),ownFile.getFILE_ID(),2)>0 &&
+                ownFileMapper.updateRgt(ownFile.getOWNFILE_RGT(),ownFile.getFILE_ID(),2)>0) {
+            ownFileMapper.insertOwnFile(ownFile);
+            String fileSize = fileInfo.getFILE_SIZE();
+            systemMapper.updateFileTotal(userId,Integer.valueOf(fileSize.substring(0,fileSize.length()-1)));// 把当前文件大小加到个人信息中的文件储量中
+            return true;
         }
         return false;
     }

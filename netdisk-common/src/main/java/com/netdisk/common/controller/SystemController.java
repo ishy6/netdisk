@@ -2,6 +2,7 @@ package com.netdisk.common.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.netdisk.common.po.SystemUser;
+import com.netdisk.common.service.OwnFileService;
 import com.netdisk.common.service.SystemSevice;
 import com.netdisk.common.util.ResultVo;
 import com.netdisk.common.util.ResultVoUtil;
@@ -75,6 +76,9 @@ public class SystemController { // 包含系统级别相关的操作
     @RequestMapping("/registuser")
     public ResultVo registUser(@RequestParam("user") String user){
         SystemUser sysUser =JSON.parseObject(user,SystemUser.class);
+        if(sysUser.getUSER_NAME().isEmpty()|| sysUser.getUSER_ACCOUNT().isEmpty()|| sysUser.getUSER_PASSWORD().isEmpty()
+                || sysUser.getUSER_TELNUMBER().isEmpty()|| sysUser.getUSER_NAME().isEmpty())
+            return ResultVoUtil.fail("注册失败");
         Integer result = systemSevice.registUser(sysUser);
         if(result > 0){
             return ResultVoUtil.success("注册成功");

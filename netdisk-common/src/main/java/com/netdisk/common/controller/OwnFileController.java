@@ -21,12 +21,6 @@ public class OwnFileController {
     private OwnFileService ownFileService;
 
 
-    @RequestMapping(value = "/initialize",method = RequestMethod.POST)
-    public int generateRootCatalog(@RequestParam("userId") String userId, @RequestParam("userId")String userName) { // 注册时生成根目录
-        return ownFileService.generateRootCatalog(userId,userName);
-    }
-
-
     @RequestMapping("/addfile")
     public ResultVo insertOneRecord(@RequestParam("fileInfo") FileInfo fileInfo, @RequestParam("parent") OwnFile parent,
                                     @RequestParam("userId") String userId, @RequestParam("userName") String userName){

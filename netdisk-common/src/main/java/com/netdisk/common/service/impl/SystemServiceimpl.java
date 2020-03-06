@@ -1,7 +1,9 @@
 package com.netdisk.common.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.netdisk.common.mapper.OwnFileMapper;
 import com.netdisk.common.mapper.SystemMapper;
+import com.netdisk.common.po.OwnFile;
 import com.netdisk.common.po.SystemUser;
 import com.netdisk.common.service.SystemSevice;
 import com.netdisk.common.util.RedisDao;
@@ -22,6 +24,8 @@ public class SystemServiceimpl implements SystemSevice {
     private SystemMapper systemMapper;
     @Autowired
     private RedisDao redisDao;
+    @Autowired
+    private OwnFileMapper ownFileMapper;
 
     /**
      * 根据用户名查找到用户信息列表，判断列表是否为空后根据比对加密后的密码信息来获取正确的用户信息，生成token后跟用户信息以键值对的形式存入redis,最后转化为DTO返回。
@@ -30,26 +34,35 @@ public class SystemServiceimpl implements SystemSevice {
      * @return
      */
     @Override
-    public SystemDto login(String username, String password) {
+    public SystemDto login(String username, String password) { // 先查找redis是缓存此用户信息，然后再判断是去数据库取数据还是从redis中获取。
         if(username == "" || username == null || password == "" || password == null)
             return null;
-        List<SystemUser> userInfos = this.getUserByName(username);
-        if(userInfos == null || userInfos.size() == 0)
-            return null;
-        for(SystemUser user : userInfos) {
-            if(user.getUSER_ENCRYPT().equals(this.getEncrypt(password))) {
-                String token  = this.getToken(user);
-                SystemUser systemUser =  this.getSystemUser(token,SystemUser.class);
-                if(systemUser == null) {
-                    System.out.println("Redis异常！");
-                    return null;
-                }
-                else { // 存到DTO
-                    return this.changeInfoType(systemUser);
+        String token = "";
+        if(redisDao.hasKey(username)) {
+            token = redisDao.getValue(username);
+            String userInfo = redisDao.getValue(token);
+            redisDao.setKey(username,token,1800); // 刷新redis缓存的时间
+            redisDao.setKey(token,userInfo,1800);
+        }else {
+            List<SystemUser> userInfos = this.getUserByName(username);
+            if(userInfos == null || userInfos.size() == 0)
+                return null;
+            for(SystemUser user : userInfos) {
+                if (user.getUSER_ENCRYPT().equals(this.getEncrypt(password))) {
+                    token = this.getToken(user);
                 }
             }
         }
-        return null;
+        if(token == "")
+            System.out.println("密码错误！");
+        SystemUser systemUser =  this.getSystemUser(token,SystemUser.class);
+        if(systemUser == null) {
+            return null;
+        }else { // 存到DTO
+            SystemDto systemDto = this.changeInfoType(systemUser);
+            systemDto.setToken(token);
+            return systemDto;
+        }
     }
 
     @Override
@@ -67,6 +80,7 @@ public class SystemServiceimpl implements SystemSevice {
     @Override
     public String getToken(SystemUser systemUser) {
         String token = UUID.randomUUID().toString().replace("-","");
+        redisDao.setKey(systemUser.getUSER_ACCOUNT(),token,1800); // 存入账号和对应的token,时效和token相同
         System.out.println("token === " + token);
         String user = JSON.toJSONString(systemUser);
         redisDao.setKey(token,user,1800);// token有效期半小时,以秒为单位
@@ -160,13 +174,18 @@ public class SystemServiceimpl implements SystemSevice {
     public int registUser(SystemUser systemUser) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String time = df.format(new Date());// 获取当前时间并转为目标格式
+        String id = UUID.randomUUID().toString().replace("-","");
         String pwd = systemUser.getUSER_PASSWORD();
         String encrypt = DigestUtils.md5DigestAsHex(pwd.getBytes());
         systemUser.setUSER_CREATETIME(time);
         systemUser.setUSER_ENCRYPT(encrypt);
-        systemUser.setUSER_ID(UUID.randomUUID().toString().replace("-",""));
+        systemUser.setUSER_ID(id);
         systemUser.setUSER_FILETOTAL(0);
         Integer result = systemMapper.insertUserInfo(systemUser);
+        if(result > 0) {
+            Integer ret = this.generateRootCatalog(id,systemUser.getUSER_NAME());// 生成个人文件根目录
+            System.out.println("结果:" + ret);
+        }
         return result;
     }
 
@@ -175,5 +194,28 @@ public class SystemServiceimpl implements SystemSevice {
         if(!isAdd)
             fileSize = -fileSize;
         return systemMapper.updateFileTotal(userId,fileSize);
+    }
+
+    @Override
+    public int generateRootCatalog(String userId,String userName) {
+        OwnFile ownFile = new OwnFile();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = df.format(new Date());
+        ownFile.setOWNFILE_ID(userId);
+        ownFile.setFILE_CREATETIME(time);
+        ownFile.setFILE_ID("unite-root-id");
+        ownFile.setFILE_NAME("/");
+        ownFile.setFILE_SIZE("null");
+        ownFile.setFILE_UPDATETIME(time);
+        ownFile.setFILE_VISITTIME(time);
+        ownFile.setOWNFILE_PATH("/"); //
+        ownFile.setOWNFILE_LEVEL(0);
+        ownFile.setOWNFILE_LFT(0);
+        ownFile.setOWNFILE_PARENTID("null");
+        ownFile.setOWNFILE_RGT(0);
+        ownFile.setUSER_ID(userId);
+        ownFile.setUSER_NAME(userName);
+        System.out.println(JSON.toJSONString(ownFile));
+        return ownFileMapper.insertOwnFile(ownFile);
     }
 }

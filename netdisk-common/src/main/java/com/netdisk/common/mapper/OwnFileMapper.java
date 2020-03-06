@@ -10,7 +10,7 @@ public interface OwnFileMapper {
     @Insert("insert into ownfile values(#{OWNFILE_ID},#{FILE_ID},#{FILE_NAME},#{USER_ID}," +
             "#{USER_NAME},#{OWNFILE_PARENTID},#{OWNFILE_LEVEL},#{OWNFILE_PATH},#{OWNFILE_LFT}," +
             "#{FILE_SIZE},#{FILE_CREATETIME},#{FILE_UPDATETIME},#{FILE_VISITTIME},#{OWNFILE_RGT})")
-    int insertOwnFile(OwnFile ownFile);
+    int     insertOwnFile(OwnFile ownFile);
 
     @Delete("delete from ownfile t where t.OWNFILE_ID = #{id}")
     int deleteOwnFile(String id);

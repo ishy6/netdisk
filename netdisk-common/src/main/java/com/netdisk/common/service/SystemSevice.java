@@ -30,4 +30,6 @@ public interface SystemSevice {
     public int registUser(SystemUser systemUser);
     // 更新个人文件储量,isAdd 为true表示加，false表示减
     public int updateFileTotal(String userId,Integer fileSize,boolean isAdd);
+    // 生成个人文件的根目录，供注册时使用,并指定目录id为用户id，目的方便登陆后的目录查询
+    public int generateRootCatalog(String userId,String userName);
 }

@@ -4,10 +4,11 @@ public class FileShare {
     private String SHARE_ID;
     private String SHARE_PATH;
     private String SHARE_URL;
-    private String SHARE_CREATETIMECHUNG;
+    private String SHARE_CREATETIME;
     private String SHARE_ENDTIME;
     private String SHARE_PASSWORD;
     private Integer SHARE_ISENCRYPT;
+    private String SHARE_USERID;
 
     public String getSHARE_ID() {
         return SHARE_ID;
@@ -33,12 +34,12 @@ public class FileShare {
         this.SHARE_URL = SHARE_URL;
     }
 
-    public String getSHARE_CREATETIMECHUNG() {
-        return SHARE_CREATETIMECHUNG;
+    public String getSHARE_CREATETIME() {
+        return SHARE_CREATETIME;
     }
 
-    public void setSHARE_CREATETIMECHUNG(String SHARE_CREATETIMECHUNG) {
-        this.SHARE_CREATETIMECHUNG = SHARE_CREATETIMECHUNG;
+    public void setSHARE_CREATETIME(String SHARE_CREATETIME) {
+        this.SHARE_CREATETIME = SHARE_CREATETIME;
     }
 
     public String getSHARE_ENDTIME() {
@@ -63,5 +64,13 @@ public class FileShare {
 
     public void setSHARE_ISENCRYPT(Integer SHARE_ISENCRYPT) {
         this.SHARE_ISENCRYPT = SHARE_ISENCRYPT;
+    }
+
+    public String getSHARE_USERID() {
+        return SHARE_USERID;
+    }
+
+    public void setSHARE_USERID(String SHARE_USERID) {
+        this.SHARE_USERID = SHARE_USERID;
     }
 }
