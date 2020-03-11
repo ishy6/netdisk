@@ -2,13 +2,11 @@ package com.netdisk.common.mapper;
 
 import com.netdisk.common.po.FileInfo;
 import com.netdisk.common.po.Upload;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
+@Mapper
 public interface FileInfoMapper {
     @Insert("insert into FILEINFO values(#{FILE_ID},#{FILE_NAME},#{FILE_TYPE},#{FILE_STATUS}," +
             "#{FILE_SIZE},#{FILE_PATH},#{UPLOADER_ID},#{UPLOADER_NAME},#{TIMES_VISIT},#{TIMES_DOWNLOAD}," +

@@ -38,11 +38,11 @@ public class SystemServiceimpl implements SystemSevice {
         if(username == "" || username == null || password == "" || password == null)
             return null;
         String token = "";
-        if(redisDao.hasKey(username)) {
+        if(redisDao.hasKey(username)) { // 如果已经登录过
             token = redisDao.getValue(username);
             String userInfo = redisDao.getValue(token);
-            redisDao.setKey(username,token,1800); // 刷新redis缓存的时间
-            redisDao.setKey(token,userInfo,1800);
+            redisDao.setKey(username,token,8); // 刷新redis缓存的时间，8小时
+            redisDao.setKey(token,userInfo,8);
         }else {
             List<SystemUser> userInfos = this.getUserByName(username);
             if(userInfos == null || userInfos.size() == 0)
@@ -110,6 +110,8 @@ public class SystemServiceimpl implements SystemSevice {
     @Override
     public boolean logout(String token) {
         if(redisDao.hasKey(token)) {
+            SystemUser systemUser = getSystemUser(token,SystemUser.class);
+            redisDao.deleteCash(systemUser.getUSER_ACCOUNT());
             redisDao.deleteCash(token);
             return true;
         }else {

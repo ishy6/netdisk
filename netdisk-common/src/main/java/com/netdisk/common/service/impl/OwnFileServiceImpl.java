@@ -26,9 +26,10 @@ public class OwnFileServiceImpl implements OwnFileService {
 
     @Override
     // @Transactional
-    public boolean insertOneRecord(FileInfo fileInfo,OwnFile parent,String userId,String userName) { // 先更新左右编码再插入节点
+    public boolean insertOneRecord(FileInfo fileInfo,OwnFile parent) { // 先更新左右编码再插入节点
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String time = df.format(new Date());
+        String userId = fileInfo.getUPLOADER_ID();
         OwnFile ownFile = new OwnFile();
         ownFile.setFILE_UPDATETIME(time);
         ownFile.setFILE_VISITTIME(time);
@@ -43,7 +44,7 @@ public class OwnFileServiceImpl implements OwnFileService {
         ownFile.setOWNFILE_PARENTID(parent.getOWNFILE_ID());
         ownFile.setOWNFILE_RGT(parent.getOWNFILE_RGT() + 1);// 插入节点右编码
         ownFile.setUSER_ID(userId);
-        ownFile.setUSER_NAME(userName);
+        ownFile.setUSER_NAME(fileInfo.getUPLOADER_NAME());
         if(ownFileMapper.updateLft(ownFile.getOWNFILE_LFT(),ownFile.getFILE_ID(),2)>0 &&
                 ownFileMapper.updateRgt(ownFile.getOWNFILE_RGT(),ownFile.getFILE_ID(),2)>0) {
             ownFileMapper.insertOwnFile(ownFile);
@@ -67,5 +68,10 @@ public class OwnFileServiceImpl implements OwnFileService {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public List<OwnFile> selectById(String ownfileId) {
+        return ownFileMapper.selectById(ownfileId);
     }
 }

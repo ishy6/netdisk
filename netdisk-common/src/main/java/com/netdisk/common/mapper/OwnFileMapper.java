@@ -27,6 +27,9 @@ public interface OwnFileMapper {
     })
     int updateOwnFile(OwnFile ownFile);
 
+    @Select("select * from ownfile t where t.OWNFILE_ID = #{ownfileId}order by t.OWNFILE_LFT ASC")
+    List<OwnFile> selectById(@Param("ownfileId") String ownfileId); // 根据id查找结点
+
     @Select("select * from ownfile t where t.USER_ID = #{userId} and t.OWNFILE_PARENTID = #{parentId} order by t.OWNFILE_LFT ASC")
     List<OwnFile> selectChildNode(@Param("userId") String userId, @Param("parentId") String parentId); // 查找子节点
 

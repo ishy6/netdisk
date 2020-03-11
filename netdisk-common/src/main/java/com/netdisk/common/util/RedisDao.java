@@ -16,7 +16,7 @@ public class RedisDao {
     public void setKey(String key,String value,Integer timeout){
         ValueOperations<String,String> ops = template.opsForValue();
         try {
-            ops.set(key, value, timeout, TimeUnit.SECONDS);
+            ops.set(key, value, timeout, TimeUnit.HOURS);
         } catch (Exception e){
             System.out.println("Redis 设置值异常");
         }
